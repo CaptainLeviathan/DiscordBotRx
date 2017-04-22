@@ -1,1 +1,1 @@
-# DiscordBoteRx
+# DiscordBotRx
