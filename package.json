@@ -1,0 +1,22 @@
+{
+  "name": "rxbot",
+  "version": "1.0.0",
+  "description": "\"better than oscars bot\"",
+  "main": "bot.js",
+  "scripts": {
+    "test": "nodemon bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CaptainLeviathan/DiscordBoteRx.git"
+  },
+  "author": "lev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CaptainLeviathan/DiscordBoteRx/issues"
+  },
+  "homepage": "https://github.com/CaptainLeviathan/DiscordBoteRx#readme",
+  "dependencies": {
+    "discord.js": "^11.0.0"
+  }
+}
