@@ -2,64 +2,73 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const operator = '~';
 
-var root = {};
+var root = initCommand(root);
+root.command = function () {
+	return 'No cammand say some thing';
+};
 
-function BaseCommand (msg) {
-  root.commands.hiThere = function (msg, layer) {
-    return 'hi there' + msg.obj.author;
-  };
+root.error = function () {
+	return 'No cammand say some thing';
+};
 
-  root.commands.help = function (msg, layer) {
-    return 'shit out of luck';
-  };
+//root sub commands
+//	hiThere command
+root.subCommands.hiThere = initCommand(root.subCommands.hiThere);
+root.subCommands.hiThere.command = function (pMsg, layer) {
+	return 'hi there' + pMsg.msg.author;
+};
 
-  root.defalt = function () {
-    return 'NoCammand say some thing';
-  };
+//	hiThere command
+root.subCommands.help = initCommand(root.subCommands.help);
+root.subCommands.help.command = function (pMsg, layer) {
+	return 'shit out of luck';
+};
 
-  root.error = function () {
-    return 'NoCammand say some thing';
-  };
-  nxtLayerTree(msg, root, 0);
-}
-
+//implementation
 function isCommand (msg) {
-   return msg.content.startsWith(operator);
+	return msg.content.startsWith(operator);
 }
 
 function parseCammands (msg) {
-  return {
-      'commands': msg.content.toLowerCase().slice(1).split(' '),
-      'obj' : msg
-  };
+	return {'commands': msg.content.toLowerCase().slice(1).split(' '), 'msg': msg};
 }
 
-function nxtLayerTree (msg, base, layer)
+function initCommand (base) {
+	base = {};
+	base.command = {};
+	base.subCommands = {};
+	base.error = {};
+	return base;
+}
+
+function nxtLayerTree (pMsg, base, layer)
 {
-  if(msg.commands.length - 1 < layer)
-  {
-    return base.defalt();
-  }
-  try
-  {
-    return base.commands[msg.commands[layer]](msg, layer + 1);
-  }
-  catch (e)
-  {
-    base.error();
-  }
+		if(layer >= pMsg.commands.length)
+		{
+			return base.command(pMsg);
+		}
+		else
+		{
+			let subCommandKeys = Object.keys(base.subCommands);
+			for (var i = 0; i < subCommandKeys.length; i++) {
+				console.log('command to check: ' + pMsg.commands[layer]);
+				console.log('subCommand ceck: ' + subCommandKeys[i]);
+				if (subCommandKeys[i] === pMsg.commands[layer]) {
+					return nxtLayerTree(pMsg, base.subCommands[subCommandKeys[i]], layer + 1);
+				}
+			}
+			return base.error();
+		}
 }
-
 
 client.on('ready', () => {
-  console.log('the bot is online');
+	console.log('the bot is online');
 });
 
 client.on('message', message => {
-    if (isCommand(message))
-    {
-          message.reply(BaseCommand(parseCammands(message)));
-    }
+	if(isCommand(message)) {
+		message.reply (nxtLayerTree(parseCammands(message), root, 0));
+	}
 });
 
-client.login('token');
+client.login('MzA1MTU4MDcxNTg2NTIxMDk4.C9ySiA.1We6bHxz5Vrhid2j8ZFrxtpI-WM');
